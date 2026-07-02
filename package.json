@@ -1,0 +1,25 @@
+{
+  "name": "com.melowrite.audio",
+  "version": "0.1.0",
+  "displayName": "Melowrite Audio Engine",
+  "description": "Play Melowrite project files in Unity. Real-time sequencer with synths, samplers, SoundFont playback, and effects. Windows desktop only.",
+  "unity": "2021.3",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "keywords": ["audio", "music", "sequencer", "daw", "tracker", "soundfont"],
+  "samples": [
+    {
+      "displayName": "Adaptive Music Demo",
+      "description": "A playable scene that switches between two songs at runtime (Now / Bar / crossfade / fade) with volume + tempo sliders. Includes both .melo projects, their samples, soundfont, impulses, and the UI sprites.",
+      "path": "Samples~/AdaptiveMusicDemo"
+    }
+  ],
+  "author": {
+    "name": "Joe Nicholson",
+    "url": "https://www.melowrite.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joeqnicholson/melowrite-unity.git"
+  },
+  "documentationUrl": "https://www.melowrite.org/docs"
+}

@@ -1,0 +1,17 @@
+<!--
+  IL2CPP managed-code stripping protection.
+
+  Unity strips unused managed code on IL2CPP targets (consoles, mobile, WebGL, and
+  IL2CPP standalone). The .melo loader (ProjectSerializer) deserializes with
+  reflection-based System.Text.Json, so the stripper can delete the DTO types and
+  members the serializer needs at runtime, and loading then fails silently.
+
+  Preserving these assemblies whole keeps the engine and the serializer intact.
+  Mono builds (Windows Editor/Standalone today) ignore this file harmlessly.
+-->
+<linker>
+  <assembly fullname="Melowrite.Core" preserve="all"/>
+  <assembly fullname="MeltySynth" preserve="all"/>
+  <assembly fullname="System.Text.Json" preserve="all"/>
+  <assembly fullname="System.Text.Encodings.Web" preserve="all"/>
+</linker>
