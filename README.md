@@ -24,18 +24,6 @@ the `?path=` form:
 https://github.com/joeqnicholson/melowrite.git?path=/unity-plugin/Melowrite
 ```
 
-### Alternatives
-
-- **From disk:** Package Manager > **Add package from disk...** > select this
-  package's `package.json` (good while developing locally).
-- **From tarball:** Package Manager > **Add package from tarball...** > select a
-  `.tgz` of this package.
-
-> First import note: `Runtime/Plugins/miniaudio.dll` is the native audio engine.
-> If you build for a non-Windows target or want to silence platform warnings,
-> select it in the Project window and set its Plugin import settings to
-> **Windows / x86_64 / Standalone** only.
-
 ## Export From Melowrite
 
 Use `File > Export Game...` and choose the `Project` target, then put the exported folder
@@ -65,12 +53,12 @@ using Melowrite;
 public class Music : MonoBehaviour
 {
     public MeloFile project;   // drag your .melo here in the Inspector (like an AudioClip)
-    MeloInstance _song;
+    public MeloSource source;
 
     void Start()
     {
-        _song = Melo.Load(project);
-        _song.PlayChunk();
+        source.Load(project)
+        source.PlayChunk();
     }
 
     public void OnCombat() => _song.SwitchChunk("Combat");   // lands on the next bar
