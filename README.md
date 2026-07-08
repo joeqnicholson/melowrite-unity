@@ -58,7 +58,7 @@ public class Music : MonoBehaviour
     void Start()
     {
         source.Load(project)
-        source.PlayChunk();
+        source.PlayChunk(0);
     }
 
     public void OnCombat() => _song.SwitchChunk("Combat");   // lands on the next bar
