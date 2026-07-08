@@ -52,12 +52,12 @@ using Melowrite;
 
 public class Music : MonoBehaviour
 {
-    public MeloFile project;   // drag your .melo here in the Inspector (like an AudioClip)
+    public MeloFile song;      // drag your .melo here in the Inspector (like an AudioClip)
     public MeloSource source;
 
     void Start()
     {
-        source.Load(project);
+        source.Load(song);
         source.PlayChunk(0);
     }
 
