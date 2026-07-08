@@ -24,6 +24,18 @@ the `?path=` form:
 https://github.com/joeqnicholson/melowrite.git?path=/unity-plugin/Melowrite
 ```
 
+### Alternatives
+
+- **From disk:** Package Manager > **Add package from disk...** > select this
+  package's `package.json` (good while developing locally).
+- **From tarball:** Package Manager > **Add package from tarball...** > select a
+  `.tgz` of this package.
+
+> First import note: `Runtime/Plugins/miniaudio.dll` is the native audio engine.
+> If you build for a non-Windows target or want to silence platform warnings,
+> select it in the Project window and set its Plugin import settings to
+> **Windows / x86_64 / Standalone** only.
+
 ## Export From Melowrite
 
 Use `File > Export Game...` and choose the `Project` target, then put the exported folder
@@ -53,12 +65,12 @@ using Melowrite;
 public class Music : MonoBehaviour
 {
     public MeloFile project;   // drag your .melo here in the Inspector (like an AudioClip)
-    public MeloSource source;
+    MeloInstance _song;
 
     void Start()
     {
-        source.Load(project)
-        source.PlayChunk(0);
+        _song = Melo.Load(project);
+        _song.PlayChunk();
     }
 
     public void OnCombat() => _song.SwitchChunk("Combat");   // lands on the next bar
@@ -76,7 +88,7 @@ Either way the `.melo` lives under your `Assets` folder and the build hook ships
 Audio is handled by a hidden object created on first use; you never place it.
 
 Loading decodes samples, which can hitch a frame for a big project. Load it off the main thread with
-`LoadAsync` - the callback runs on the main thread with the ready channel, so nothing touches a frame:
+`LoadAsync` - the callback runs on the main thread with the ready instance, so nothing touches a frame:
 
 ```csharp
 Melo.LoadAsync(project, song => song.PlayChunk());   // decodes in the background
@@ -110,7 +122,7 @@ song.SwitchChunk("GameOver", MeloSwitch.Now);  // right now
 song.CancelSwitch();                           // call off a pending switch
 ```
 
-Re-point a channel to a whole different project with the same timing - it waits for the current
+Re-point an instance to a whole different project with the same timing - it waits for the current
 project's boundary. The decoded engine is reused if you loaded it up front, so the swap doesn't
 re-decode and `song.File` reflects whatever is playing now:
 
@@ -120,11 +132,11 @@ public MeloFile bossFile;   // drag another .melo
 void Start() => Melo.LoadAsync(bossFile);   // warm it up front (background) so the swap never hitches
 
 // later, when the fight starts:
-song.SwitchSong(bossFile);                  // re-points this channel on the next bar
+song.SwitchSong(bossFile);                  // re-points this instance on the next bar
 ```
 
 Or load a brand-new song on the fly and switch to it the moment it's ready - `SwitchSong` takes either
-a `MeloFile` or a loaded channel:
+a `MeloFile` or a loaded instance:
 
 ```csharp
 Melo.LoadAsync(coolSongFile, coolSong => song.SwitchSong(coolSong, MeloSwitch.Bar));
