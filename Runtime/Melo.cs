@@ -381,23 +381,25 @@ namespace Melowrite
         // stopped, no new engine. Author the .melo as a bank (tracks = categories, pads = variations).
 
         // Fire a one-shot of a named multisampler pad. Overlaps itself.
-        public void Trigger(string track, string pad, float velocity = 1f)
-            => Trigger(TrackIndex(track), pad, velocity);
+        // pan = per-trigger position (-1 left .. +1 right), added to the pad's own
+        // pan; each overlapping trigger keeps its own position.
+        public void Trigger(string track, string pad, float velocity = 1f, float pan = 0f)
+            => Trigger(TrackIndex(track), pad, velocity, pan);
 
         // Fire a one-shot of a named pad on a track index.
-        public void Trigger(int trackIndex, string pad, float velocity = 1f)
+        public void Trigger(int trackIndex, string pad, float velocity = 1f, float pan = 0f)
         {
             if (_engine == null) return;
             _rt.Activate(this);                        // make sure this bank is in the mix
-            _engine.TriggerPad(trackIndex, pad, velocity);   // engine queues it internally (race-free)
+            _engine.TriggerPad(trackIndex, pad, velocity, pan);   // engine queues it internally (race-free)
         }
 
         // Start a held/sustained pad (loops/drones). Release with Release().
-        public void Hold(string track, string pad, float velocity = 1f)
+        public void Hold(string track, string pad, float velocity = 1f, float pan = 0f)
         {
             if (_engine == null) return;
             _rt.Activate(this);
-            _engine.HoldPad(TrackIndex(track), pad, velocity);
+            _engine.HoldPad(TrackIndex(track), pad, velocity, pan);
         }
 
         // Frame-gated hold: call every frame (e.g. from Update while a button is
@@ -405,14 +407,14 @@ namespace Melowrite
         // the pad's normal release a short grace (~0.12s) later - no Release()
         // bookkeeping. Idempotent: re-calls while held refresh the hold, they
         // never retrigger the sample.
-        public void Sustain(string track, string pad, float velocity = 1f)
-            => Sustain(TrackIndex(track), pad, velocity);
+        public void Sustain(string track, string pad, float velocity = 1f, float pan = 0f)
+            => Sustain(TrackIndex(track), pad, velocity, pan);
 
-        public void Sustain(int trackIndex, string pad, float velocity = 1f)
+        public void Sustain(int trackIndex, string pad, float velocity = 1f, float pan = 0f)
         {
             if (_engine == null) return;
             _rt.Activate(this);
-            _engine.SustainPad(trackIndex, pad, velocity);
+            _engine.SustainPad(trackIndex, pad, velocity, pan);
         }
 
         // Release a pad started with Hold().
