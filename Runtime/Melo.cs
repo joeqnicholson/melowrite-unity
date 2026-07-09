@@ -400,6 +400,21 @@ namespace Melowrite
             _engine.HoldPad(TrackIndex(track), pad, velocity);
         }
 
+        // Frame-gated hold: call every frame (e.g. from Update while a button is
+        // down) to keep the pad sounding. Stop calling and it auto-releases with
+        // the pad's normal release a short grace (~0.12s) later - no Release()
+        // bookkeeping. Idempotent: re-calls while held refresh the hold, they
+        // never retrigger the sample.
+        public void Sustain(string track, string pad, float velocity = 1f)
+            => Sustain(TrackIndex(track), pad, velocity);
+
+        public void Sustain(int trackIndex, string pad, float velocity = 1f)
+        {
+            if (_engine == null) return;
+            _rt.Activate(this);
+            _engine.SustainPad(trackIndex, pad, velocity);
+        }
+
         // Release a pad started with Hold().
         public void Release(string track, string pad)
             => _engine?.ReleasePad(TrackIndex(track), pad);

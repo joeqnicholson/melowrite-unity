@@ -168,6 +168,8 @@ public class MeloSource : MonoBehaviour
     public void Trigger(string track, string pad, float velocity = 1f) => Instance?.Trigger(track, pad, velocity);
     public void Trigger(int trackIndex, string pad, float velocity = 1f) => Instance?.Trigger(trackIndex, pad, velocity);
     public void Hold(string track, string pad, float velocity = 1f) => Instance?.Hold(track, pad, velocity);
+    public void Sustain(string track, string pad, float velocity = 1f) => Instance?.Sustain(track, pad, velocity);
+    public void Sustain(int trackIndex, string pad, float velocity = 1f) => Instance?.Sustain(trackIndex, pad, velocity);
     public void Release(string track, string pad) => Instance?.Release(track, pad);
     public void NoteOn(int trackIndex, int midiNote, float velocity = 1f) => Instance?.NoteOn(trackIndex, midiNote, velocity);
     public void NoteOff(int trackIndex, int midiNote) => Instance?.NoteOff(trackIndex, midiNote);
