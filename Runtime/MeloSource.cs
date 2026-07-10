@@ -5,9 +5,11 @@ using Melowrite;
 using Melowrite.Core;    // MeloEngine (Engine, RunOnAudioThread)
 using Melowrite.Audio;   // MeloTrack, MeloBus
 
-// The AudioSource of Melowrite. Drag a .melo, get volume / pan / tempo in the Inspector, and call the
-// same methods you'd call on a MeloInstance - the FULL surface is forwarded below. The underlying
-// instance is also at .Instance.
+/// <summary>
+/// The AudioSource of Melowrite. Drag a .melo, get volume / pan / tempo in the Inspector, and call the
+/// same methods you'd call on a MeloInstance - the FULL surface is forwarded below. The underlying
+/// instance is also at .Instance.
+/// </summary>
 [AddComponentMenu("Melowrite/Melo Source")]
 public class MeloSource : MonoBehaviour
 {
@@ -29,7 +31,9 @@ public class MeloSource : MonoBehaviour
     [Tooltip("Beats per minute. 0 = the project's authored tempo.")]
     public int tempo = 0;
 
-    // The wrapped instance. Every method below just forwards to this.
+    /// <summary>
+    /// The wrapped instance. Every method below just forwards to this.
+    /// </summary>
     public MeloInstance Instance { get; private set; }
 
     void Awake()
@@ -49,7 +53,9 @@ public class MeloSource : MonoBehaviour
 
     void OnDestroy() => Instance?.Stop();
 
-    // Play the chosen chunk (or the arrangement). Loads the song if needed.
+    /// <summary>
+    /// Play the chosen chunk (or the arrangement). Loads the song if needed.
+    /// </summary>
     public void Play()
     {
         if (Instance == null && song != null) Instance = Melo.Load(song);
@@ -59,9 +65,11 @@ public class MeloSource : MonoBehaviour
         else Instance.PlayChunk(startChunk, loop);                                        // otherwise a chunk name
     }
 
-    // Load a song from code (the Inspector Song field is optional). Replaces whatever was
-    // loaded, stops the old one, and hands back the instance so you can drive it immediately.
-    // Doesn't auto-play - call Play() or PlayChunk(...) after.
+    /// <summary>
+    /// Load a song from code (the Inspector Song field is optional). Replaces whatever was
+    /// loaded, stops the old one, and hands back the instance so you can drive it immediately.
+    /// Doesn't auto-play - call Play() or PlayChunk(...) after.
+    /// </summary>
     public MeloInstance Load(MeloFile file)
     {
         Instance?.Stop();
@@ -70,8 +78,10 @@ public class MeloSource : MonoBehaviour
         return Instance;
     }
 
-    // Same as Load but decodes off the main thread; onLoaded fires (on the main thread) when
-    // it's ready to play, so a big project can't hitch the frame it loads on.
+    /// <summary>
+    /// Same as Load but decodes off the main thread; onLoaded fires (on the main thread) when
+    /// it's ready to play, so a big project can't hitch the frame it loads on.
+    /// </summary>
     public void LoadAsync(MeloFile file, Action<MeloInstance> onLoaded = null)
     {
         Instance?.Stop();
@@ -146,8 +156,10 @@ public class MeloSource : MonoBehaviour
     public void SwitchSongCrossfade(MeloSource other, int startChunk, float duration, MeloSwitch when = MeloSwitch.Bar) => Instance?.SwitchSongCrossfade(other != null ? other.Instance : null, startChunk, duration, when);
 
     // -- Mix --
-    // These write the serialized field too (not just the instance): the field is what Update() pushes
-    // every frame and what the Inspector shows, so a code-set value has to land there or it won't stick.
+    /// <summary>
+    /// These write the serialized field too (not just the instance): the field is what Update() pushes
+    /// every frame and what the Inspector shows, so a code-set value has to land there or it won't stick.
+    /// </summary>
     public void SetTempo(int bpm) { tempo = bpm; Instance?.SetTempo(bpm); }
     public void SetMasterVolume(float v) { volume = v; Instance?.SetMasterVolume(v); }
     public void SetPan(float p) { pan = p; Instance?.SetPan(p); }

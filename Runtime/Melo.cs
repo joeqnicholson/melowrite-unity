@@ -25,7 +25,9 @@ using Melowrite.Audio.Instruments;
 
 namespace Melowrite
 {
-    // When a chunk or song switch takes effect.
+    /// <summary>
+    /// When a chunk or song switch takes effect.
+    /// </summary>
     public enum MeloSwitch
     {
         Now,     // immediately
@@ -34,41 +36,57 @@ namespace Melowrite
         Queue    // when the current chunk finishes its loop
     }
 
-    // Flat front door. Everything routes through the shared MeloDirector.
+    /// <summary>
+    /// Flat front door. Everything routes through the shared MeloDirector.
+    /// </summary>
     public static partial class Melo
     {
-        // The shared mixer the host pumps. Rarely needed directly.
+        /// <summary>
+        /// The shared mixer the host pumps. Rarely needed directly.
+        /// </summary>
         public static MeloDirector Director => MeloDirector.Instance;
 
-        // Load a project by path. Runs through MeloDirector.ResolvePath (identity by default;
-        // the Unity host points it at the Assets/StreamingAssets resolver). The decoded engine is
-        // held and reused, so loading the same project again (or switching to it) never re-decodes.
-        // Null if missing.
+        /// <summary>
+        /// Load a project by path. Runs through MeloDirector.ResolvePath (identity by default;
+        /// the Unity host points it at the Assets/StreamingAssets resolver). The decoded engine is
+        /// held and reused, so loading the same project again (or switching to it) never re-decodes.
+        /// Null if missing.
+        /// </summary>
         public static MeloInstance Load(string projectPath) => MeloDirector.Instance.Load(projectPath);
 
-        // Load a project OFF the main thread so the decode never hitches a frame. Returns immediately.
-        // The optional `onLoaded` fires later on the main thread (from Tick) with the ready channel -
-        // safe to Play/use - or skip it just to warm the project into memory for a later SwitchSong.
-        // onLoaded(null) on failure. Already-loaded projects deliver on the next Tick with no thread hop.
+        /// <summary>
+        /// Load a project OFF the main thread so the decode never hitches a frame. Returns immediately.
+        /// The optional `onLoaded` fires later on the main thread (from Tick) with the ready channel -
+        /// safe to Play/use - or skip it just to warm the project into memory for a later SwitchSong.
+        /// onLoaded(null) on failure. Already-loaded projects deliver on the next Tick with no thread hop.
+        /// </summary>
         public static void LoadAsync(string projectPath, Action<MeloInstance> onLoaded = null)
             => MeloDirector.Instance.LoadAsync(projectPath, onLoaded);
 
-        // Final mix volume for all Melowrite audio (0-1).
+        /// <summary>
+        /// Final mix volume for all Melowrite audio (0-1).
+        /// </summary>
         public static float MasterVolume
         {
             get => MeloDirector.Instance.MasterVolume;
             set => MeloDirector.Instance.MasterVolume = Clamp01(value);
         }
 
-        // Stop sequenced playback on every channel (banks stay live for triggers).
+        /// <summary>
+        /// Stop sequenced playback on every channel (banks stay live for triggers).
+        /// </summary>
         public static void StopAll() => MeloDirector.Instance.StopAll();
 
-        // Dispose every loaded project and clear the shared soundfont/clip caches. Reclaims all
-        // Melowrite audio memory; call it on level/scene exit.
+        /// <summary>
+        /// Dispose every loaded project and clear the shared soundfont/clip caches. Reclaims all
+        /// Melowrite audio memory; call it on level/scene exit.
+        /// </summary>
         public static void UnloadAll() => MeloDirector.Instance.UnloadAll();
 
-        // Every note hit across all channels: (instance, trackIndex, MIDI pitch, velocity 0-127).
-        // Raised on the main thread from Tick().
+        /// <summary>
+        /// Every note hit across all channels: (instance, trackIndex, MIDI pitch, velocity 0-127).
+        /// Raised on the main thread from Tick().
+        /// </summary>
         public static event Action<MeloInstance, int, int, int> OnNote
         {
             add    => MeloDirector.Instance.OnNote += value;
@@ -76,9 +94,11 @@ namespace Melowrite
         }
 
         // -- Raw audio-file SFX (wav / mp3 / ogg) --
-        // Fire a sound once. Polyphonic; the clip is decoded once and cached. Returns a voice id
-        // you can Stop/adjust, or ignore for fire-and-forget. volume 0-1, pan -1..+1,
-        // pitch (1 = normal, 2 = octave up), loop, effects = route through the SFX FX bus.
+        /// <summary>
+        /// Fire a sound once. Polyphonic; the clip is decoded once and cached. Returns a voice id
+        /// you can Stop/adjust, or ignore for fire-and-forget. volume 0-1, pan -1..+1,
+        /// pitch (1 = normal, 2 = octave up), loop, effects = route through the SFX FX bus.
+        /// </summary>
         public static int PlayOneShot(string file, float volume = 1f, float pan = 0f, float pitch = 1f,
                                       bool loop = false, bool effects = true)
             => MeloDirector.Instance.PlaySfx(file, volume, pan, pitch, loop, effects);
@@ -89,7 +109,9 @@ namespace Melowrite
         public static void SetPan(int voice, float p)    => MeloDirector.Instance.Sfx.SetVoicePan(voice, p);
         public static void SetPitch(int voice, float s)  => MeloDirector.Instance.Sfx.SetVoiceSpeed(voice, s);
 
-        // Master volume for the raw-SFX bus only (0-1). Melo.MasterVolume scales everything.
+        /// <summary>
+        /// Master volume for the raw-SFX bus only (0-1). Melo.MasterVolume scales everything.
+        /// </summary>
         public static float SfxVolume
         {
             get => MeloDirector.Instance.Sfx.MasterVolume;
@@ -103,27 +125,35 @@ namespace Melowrite
             => MeloDirector.Instance.SetDelay(mix, intervalMs, decayMs);
         public static void ClearEffects() => MeloDirector.Instance.ClearEffects();
 
-        // Copy an effect chain off one of a project's mixer buses onto the SFX bus. busName e.g. "A".
+        /// <summary>
+        /// Copy an effect chain off one of a project's mixer buses onto the SFX bus. busName e.g. "A".
+        /// </summary>
         public static void CopyEffectsFrom(MeloInstance instance, string busName)
             => MeloDirector.Instance.CopyEffectsFrom(instance, busName);
 
         internal static float Clamp01(float v) => v < 0f ? 0f : (v > 1f ? 1f : v);
     }
 
-    // A persistent playback CHANNEL you hold and control. It plays one project at a time; SwitchSong
-    // re-points this same channel to a different project (quantized), so the handle stays valid for
-    // the life of the game object. Everything you can do to a running project lives here.
-    // Sequencer/mix calls are deferred to the audio thread (race-free).
+    /// <summary>
+    /// A persistent playback CHANNEL you hold and control. It plays one project at a time; SwitchSong
+    /// re-points this same channel to a different project (quantized), so the handle stays valid for
+    /// the life of the game object. Everything you can do to a running project lives here.
+    /// Sequencer/mix calls are deferred to the audio thread (race-free).
+    /// </summary>
     public sealed partial class MeloInstance
     {
         private readonly MeloDirector _rt;
         internal MeloEngine _engine;   // the CURRENT engine; changes when SwitchSong lands. Null once Unload()ed
         internal string _path;         // the CURRENT project's resolved path; changes on SwitchSong
 
-        // The raw engine, for anything the wrappers don't surface. Null after Unload().
+        /// <summary>
+        /// The raw engine, for anything the wrappers don't surface. Null after Unload().
+        /// </summary>
         public MeloEngine Engine => _engine;
 
-        // Names reflect the project playing RIGHT NOW (they change after a SwitchSong lands).
+        /// <summary>
+        /// Names reflect the project playing RIGHT NOW (they change after a SwitchSong lands).
+        /// </summary>
         public string[] ChunkNames => _engine?.GetChunkNames() ?? Array.Empty<string>();
         public string[] TrackNames => _engine?.GetTrackNames() ?? Array.Empty<string>();
         public string[] BusNames   => _engine?.GetBusNames()   ?? Array.Empty<string>();
@@ -151,9 +181,11 @@ namespace Melowrite
 
         // -- Sequenced playback (music) --
 
-        // Start playing a chunk (section) on this channel. Loops by default; looping:false plays it once.
-        // chunk = null plays the first chunk. fadeOut (seconds) fades the current playback out first, then
-        // starts the new chunk at full - no overlap. For an overlapping crossfade use PlayChunkCrossfade.
+        /// <summary>
+        /// Start playing a chunk (section) on this channel. Loops by default; looping:false plays it once.
+        /// chunk = null plays the first chunk. fadeOut (seconds) fades the current playback out first, then
+        /// starts the new chunk at full - no overlap. For an overlapping crossfade use PlayChunkCrossfade.
+        /// </summary>
         public void PlayChunk(string chunk = null, bool looping = true, float fadeOut = 0f)
         {
             if (_engine == null) return;
@@ -161,7 +193,9 @@ namespace Melowrite
             PlayChunkResolved(idx, looping, fadeOut);
         }
 
-        // Same, by chunk index.
+        /// <summary>
+        /// Same, by chunk index.
+        /// </summary>
         public void PlayChunk(int index, bool looping = true, float fadeOut = 0f)
         {
             if (_engine == null) return;
@@ -175,8 +209,10 @@ namespace Melowrite
             else { _rt.Activate(this); _rt.Defer(() => PlayChunkAt(idx, looping)); }
         }
 
-        // Crossfade to another section of THIS song: a fresh instance starts on `chunk` at full while
-        // the current playback fades out over `duration` seconds (they overlap).
+        /// <summary>
+        /// Crossfade to another section of THIS song: a fresh instance starts on `chunk` at full while
+        /// the current playback fades out over `duration` seconds (they overlap).
+        /// </summary>
         public void PlayChunkCrossfade(string chunk, float duration, bool looping = true)
         {
             if (_engine == null) return;
@@ -184,7 +220,9 @@ namespace Melowrite
             if (idx >= 0) _rt.CrossfadeChunk(this, _path, idx, looping, duration);
         }
 
-        // Same, by chunk index.
+        /// <summary>
+        /// Same, by chunk index.
+        /// </summary>
         public void PlayChunkCrossfade(int index, float duration, bool looping = true)
         {
             if (_engine != null) _rt.CrossfadeChunk(this, _path, index, looping, duration);
@@ -197,9 +235,11 @@ namespace Melowrite
             else _engine.PlayChunkOnce(idx);
         }
 
-        // Play the whole arrangement (timeline) instead of a single chunk. fadeOut (seconds) fades the
-        // current playback out first, then starts the arrangement at full - no overlap. For an
-        // overlapping crossfade use PlayArrangementCrossfade.
+        /// <summary>
+        /// Play the whole arrangement (timeline) instead of a single chunk. fadeOut (seconds) fades the
+        /// current playback out first, then starts the arrangement at full - no overlap. For an
+        /// overlapping crossfade use PlayArrangementCrossfade.
+        /// </summary>
         public void PlayArrangement(float fadeOut = 0f)
         {
             if (_engine == null) return;
@@ -207,16 +247,20 @@ namespace Melowrite
             else { _rt.Activate(this); _rt.Defer(() => _engine?.PlayArrangement()); }
         }
 
-        // Crossfade to the arrangement: a fresh instance starts the timeline at full while the current
-        // playback fades out over `duration` seconds (they overlap).
+        /// <summary>
+        /// Crossfade to the arrangement: a fresh instance starts the timeline at full while the current
+        /// playback fades out over `duration` seconds (they overlap).
+        /// </summary>
         public void PlayArrangementCrossfade(float duration)
         {
             if (_engine != null) _rt.CrossfadeChunk(this, _path, -1, true, duration);   // -1 = arrangement
         }
 
-        // Fire a chunk on its OWN throwaway playhead - "headless" (no channel handle). It overlaps
-        // whatever this channel is playing and auto-cleans when it finishes (great for stings).
-        // Heavier than Trigger() (a separate engine per fire). chunk = null fires the first chunk.
+        /// <summary>
+        /// Fire a chunk on its OWN throwaway playhead - "headless" (no channel handle). It overlaps
+        /// whatever this channel is playing and auto-cleans when it finishes (great for stings).
+        /// Heavier than Trigger() (a separate engine per fire). chunk = null fires the first chunk.
+        /// </summary>
         public void PlayChunkHeadless(string chunk = null)
         {
             if (_engine == null) return;
@@ -224,23 +268,31 @@ namespace Melowrite
             if (idx >= 0) _rt.SpawnOneShot(_path, idx);
         }
 
-        // Same, by chunk index.
+        /// <summary>
+        /// Same, by chunk index.
+        /// </summary>
         public void PlayChunkHeadless(int index)
         {
             if (_engine != null) _rt.SpawnOneShot(_path, index);
         }
 
-        // Stop sequenced playback (tails ring out). The channel stays live so it can be re-Played or
-        // Triggered; call Unload() to free it.
+        /// <summary>
+        /// Stop sequenced playback (tails ring out). The channel stays live so it can be re-Played or
+        /// Triggered; call Unload() to free it.
+        /// </summary>
         public void Stop()   => _rt.Defer(() => _engine?.Stop());
         public void Pause()  => _rt.Defer(() => _engine?.Pause());
         public void Resume() => _rt.Defer(() => _engine?.Resume());
 
-        // Fade this song out to silence over `duration` seconds, then stop it. duration <= 0 stops now.
+        /// <summary>
+        /// Fade this song out to silence over `duration` seconds, then stop it. duration &lt;= 0 stops now.
+        /// </summary>
         public void FadeOut(float duration = 1f) => _rt.FadeOutInstance(this, duration);
 
-        // Switch to another chunk (section) of the CURRENT project, quantized by `when` - defaults to
-        // the next bar so it always lands on the music.
+        /// <summary>
+        /// Switch to another chunk (section) of the CURRENT project, quantized by `when` - defaults to
+        /// the next bar so it always lands on the music.
+        /// </summary>
         public void SwitchChunk(string chunk, MeloSwitch when = MeloSwitch.Bar)
             => _rt.Defer(() => ApplyChunkSwitch(chunk, -1, when));
         public void SwitchChunk(int index, MeloSwitch when = MeloSwitch.Bar)
@@ -259,20 +311,24 @@ namespace Melowrite
             }
         }
 
-        // Re-point THIS channel to a DIFFERENT project ("switch song"), quantized by `when`. Detection
-        // happens on the AUDIO thread (buffer-accurate): when the current project reaches the boundary,
-        // this channel stops it and starts the new one. The decoded engine is reused if the project was
-        // already loaded, so the swap never re-decodes. Pass a start chunk (name or index) to pick which
-        // section the new song begins on - otherwise it plays the whole arrangement. fadeOut (seconds)
-        // fades the current song out, THEN the new one starts at full (no overlap). For an overlapping
-        // crossfade use SwitchSongCrossfade. Now swaps immediately.
+        /// <summary>
+        /// Re-point THIS channel to a DIFFERENT project ("switch song"), quantized by `when`. Detection
+        /// happens on the AUDIO thread (buffer-accurate): when the current project reaches the boundary,
+        /// this channel stops it and starts the new one. The decoded engine is reused if the project was
+        /// already loaded, so the swap never re-decodes. Pass a start chunk (name or index) to pick which
+        /// section the new song begins on - otherwise it plays the whole arrangement. fadeOut (seconds)
+        /// fades the current song out, THEN the new one starts at full (no overlap). For an overlapping
+        /// crossfade use SwitchSongCrossfade. Now swaps immediately.
+        /// </summary>
         public void SwitchSong(string projectPath, MeloSwitch when = MeloSwitch.Bar, float fadeOut = 0f)
         {
             var to = _rt.ResolveAndLoad(projectPath, out var resolved);
             if (to != null) _rt.ScheduleSwitch(this, to, resolved, -1, fadeOut, false, false, true, when);
         }
 
-        // ...beginning on a named chunk instead of the arrangement.
+        /// <summary>
+        /// ...beginning on a named chunk instead of the arrangement.
+        /// </summary>
         public void SwitchSong(string projectPath, string startChunk, MeloSwitch when = MeloSwitch.Bar, float fadeOut = 0f)
         {
             var to = _rt.ResolveAndLoad(projectPath, out var resolved);
@@ -281,16 +337,20 @@ namespace Melowrite
             _rt.ScheduleSwitch(this, to, resolved, idx, fadeOut, false, false, true, when);
         }
 
-        // ...beginning on a chunk index.
+        /// <summary>
+        /// ...beginning on a chunk index.
+        /// </summary>
         public void SwitchSong(string projectPath, int startChunk, MeloSwitch when = MeloSwitch.Bar, float fadeOut = 0f)
         {
             var to = _rt.ResolveAndLoad(projectPath, out var resolved);
             if (to != null) _rt.ScheduleSwitch(this, to, resolved, startChunk, fadeOut, false, false, true, when);
         }
 
-        // Re-point this channel to whatever `other` has loaded (reuses other's already-decoded engine,
-        // so it's free - handy from a LoadAsync callback: Melo.LoadAsync(f, song => player.SwitchSong(song))).
-        // No start chunk = play the new song's arrangement; pass one (name or index) to begin on a section.
+        /// <summary>
+        /// Re-point this channel to whatever `other` has loaded (reuses other's already-decoded engine,
+        /// so it's free - handy from a LoadAsync callback: Melo.LoadAsync(f, song =&gt; player.SwitchSong(song))).
+        /// No start chunk = play the new song's arrangement; pass one (name or index) to begin on a section.
+        /// </summary>
         public void SwitchSong(MeloInstance other, MeloSwitch when = MeloSwitch.Bar, float fadeOut = 0f)
             => SwitchSong(other, -1, when, fadeOut);
 
@@ -347,7 +407,9 @@ namespace Melowrite
             _rt.ScheduleSwitch(this, other._engine, other._path, startChunk, duration, true, false, true, when);
         }
 
-        // Cancel a pending SwitchChunk (Beat/Bar/Queue) that hasn't fired yet.
+        /// <summary>
+        /// Cancel a pending SwitchChunk (Beat/Bar/Queue) that hasn't fired yet.
+        /// </summary>
         public void CancelSwitch() => _rt.Defer(() => { _engine?.CancelSchedule(); _engine?.CancelQueue(); });
 
         public void SeekToBar(int bar) => _rt.Defer(() => _engine?.SeekToBar(bar));
@@ -355,13 +417,17 @@ namespace Melowrite
         // -- Mix --
         public void SetTempo(int bpm)                     => _rt.Defer(() => _engine?.SetTempo(bpm));
         public void SetMasterVolume(float volume)         => _rt.Defer(() => _engine?.SetMasterVolume(volume));
-        // Pan this song's whole output: -1 = left, 0 = center, +1 = right. Applied at the mix.
+        /// <summary>
+        /// Pan this song's whole output: -1 = left, 0 = center, +1 = right. Applied at the mix.
+        /// </summary>
         public void SetPan(float pan)                     => _rt.SetChannelPan(this, pan);
         public void SetTrackMuted(string track, bool m)   => _rt.Defer(() => _engine?.SetTrackMuted(track, m));
         public void SetTrackMuted(int track, bool m)      => _rt.Defer(() => _engine?.SetTrackMuted(track, m));
         public void SetTrackVolume(string track, float v) => _rt.Defer(() => _engine?.SetTrackVolume(track, v));
         public void SetTrackVolume(int track, float v)    => _rt.Defer(() => _engine?.SetTrackVolume(track, v));
-        // send to bus A (usually reverb) / bus B (usually delay), 0-1
+        /// <summary>
+        /// send to bus A (usually reverb) / bus B (usually delay), 0-1
+        /// </summary>
         public void SetSendA(string track, float level)   => _rt.Defer(() => _engine?.SetTrackSend(track, "A", level));
         public void SetSendA(int track, float level)      => _rt.Defer(() => _engine?.SetTrackSendA(track, level));
         public void SetSendB(string track, float level)   => _rt.Defer(() => _engine?.SetTrackSend(track, "B", level));
@@ -369,10 +435,14 @@ namespace Melowrite
         public void SetBusVolume(int bus, float volume)   => _rt.Defer(() => _engine?.SetBusVolume(bus, volume));
         public void SwapPalette(string palette)           => _rt.Defer(() => _engine?.SwapPalette(palette));
 
-        // set a parameter on a bus effect, e.g. SetBusEffectParam(1, 0, "Mix", 0.5f)
+        /// <summary>
+        /// set a parameter on a bus effect, e.g. SetBusEffectParam(1, 0, "Mix", 0.5f)
+        /// </summary>
         public void SetBusEffectParam(int bus, int effect, string param, float value)
             => _rt.Defer(() => _engine?.SetBusEffectParam(bus, effect, param, value));
-        // set a parameter on a track effect
+        /// <summary>
+        /// set a parameter on a track effect
+        /// </summary>
         public void SetTrackEffectParam(int track, int effect, string param, float value)
             => _rt.Defer(() => _engine?.SetTrackEffectParam(track, effect, param, value));
 
@@ -380,13 +450,17 @@ namespace Melowrite
         // Fire this project's instruments on demand: polyphonic, mixed live, works with the transport
         // stopped, no new engine. Author the .melo as a bank (tracks = categories, pads = variations).
 
-        // Fire a one-shot of a named multisampler pad. Overlaps itself.
-        // pan = per-trigger position (-1 left .. +1 right), added to the pad's own
-        // pan; each overlapping trigger keeps its own position.
+        /// <summary>
+        /// Fire a one-shot of a named multisampler pad. Overlaps itself.
+        /// pan = per-trigger position (-1 left .. +1 right), added to the pad's own
+        /// pan; each overlapping trigger keeps its own position.
+        /// </summary>
         public void Trigger(string track, string pad, float velocity = 1f, float pan = 0f)
             => Trigger(TrackIndex(track), pad, velocity, pan);
 
-        // Fire a one-shot of a named pad on a track index.
+        /// <summary>
+        /// Fire a one-shot of a named pad on a track index.
+        /// </summary>
         public void Trigger(int trackIndex, string pad, float velocity = 1f, float pan = 0f)
         {
             if (_engine == null) return;
@@ -394,7 +468,9 @@ namespace Melowrite
             _engine.TriggerPad(trackIndex, pad, velocity, pan);   // engine queues it internally (race-free)
         }
 
-        // Start a held/sustained pad (loops/drones). Release with Release().
+        /// <summary>
+        /// Start a held/sustained pad (loops/drones). Release with Release().
+        /// </summary>
         public void Hold(string track, string pad, float velocity = 1f, float pan = 0f)
         {
             if (_engine == null) return;
@@ -402,11 +478,13 @@ namespace Melowrite
             _engine.HoldPad(TrackIndex(track), pad, velocity, pan);
         }
 
-        // Frame-gated hold: call every frame (e.g. from Update while a button is
-        // down) to keep the pad sounding. Stop calling and it auto-releases with
-        // the pad's normal release a short grace (~0.12s) later - no Release()
-        // bookkeeping. Idempotent: re-calls while held refresh the hold, they
-        // never retrigger the sample.
+        /// <summary>
+        /// Frame-gated hold: call every frame (e.g. from Update while a button is
+        /// down) to keep the pad sounding. Stop calling and it auto-releases with
+        /// the pad's normal release a short grace (~0.12s) later - no Release()
+        /// bookkeeping. Idempotent: re-calls while held refresh the hold, they
+        /// never retrigger the sample.
+        /// </summary>
         public void Sustain(string track, string pad, float velocity = 1f, float pan = 0f)
             => Sustain(TrackIndex(track), pad, velocity, pan);
 
@@ -417,11 +495,15 @@ namespace Melowrite
             _engine.SustainPad(trackIndex, pad, velocity, pan);
         }
 
-        // Release a pad started with Hold().
+        /// <summary>
+        /// Release a pad started with Hold().
+        /// </summary>
         public void Release(string track, string pad)
             => _engine?.ReleasePad(TrackIndex(track), pad);
 
-        // Melodic note on (MIDI pitch, velocity 0-1).
+        /// <summary>
+        /// Melodic note on (MIDI pitch, velocity 0-1).
+        /// </summary>
         public void NoteOn(int trackIndex, int midiNote, float velocity = 1f)
         {
             if (_engine == null) return;
@@ -429,7 +511,9 @@ namespace Melowrite
             _engine.NoteOn(trackIndex, midiNote, velocity);
         }
 
-        // Melodic note off.
+        /// <summary>
+        /// Melodic note off.
+        /// </summary>
         public void NoteOff(int trackIndex, int midiNote) => _engine?.NoteOff(trackIndex, midiNote);
 
         private int TrackIndex(string name) => _engine == null ? -1 : _engine.GetTrackIndex(name);
@@ -438,7 +522,9 @@ namespace Melowrite
         // These expose live project objects (Volume, Pan, Sends, effects). For mutations during
         // playback, prefer RunOnAudioThread or the queued Set* methods above.
 
-        // track by name; check IsValid before use
+        /// <summary>
+        /// track by name; check IsValid before use
+        /// </summary>
         public MeloTrack Track(string name)
         {
             if (_engine == null) return default;
@@ -446,7 +532,9 @@ namespace Melowrite
             return idx < 0 ? default : new MeloTrack(_engine.Project.Tracks[idx], idx);
         }
 
-        // track by index; check IsValid before use
+        /// <summary>
+        /// track by index; check IsValid before use
+        /// </summary>
         public MeloTrack Track(int index)
         {
             if (_engine == null || index < 0 || index >= _engine.Project.Tracks.Count) return default;
@@ -460,7 +548,9 @@ namespace Melowrite
                 yield return new MeloTrack(_engine.Project.Tracks[i], i);
         }
 
-        // bus by name; check IsValid before use
+        /// <summary>
+        /// bus by name; check IsValid before use
+        /// </summary>
         public MeloBus Bus(string name)
         {
             if (_engine == null) return default;
@@ -470,14 +560,18 @@ namespace Melowrite
             return default;
         }
 
-        // bus by index; bus 0 is master
+        /// <summary>
+        /// bus by index; bus 0 is master
+        /// </summary>
         public MeloBus Bus(int index)
         {
             if (_engine == null || index < 0 || index >= _engine.Project.Buses.Count) return default;
             return new MeloBus(_engine.Project.Buses[index], index);
         }
 
-        // the master bus (final output stage)
+        /// <summary>
+        /// the master bus (final output stage)
+        /// </summary>
         public MeloBus Master => _engine == null
             ? default
             : new MeloBus(_engine.Project.MasterBus, _engine.Project.Buses.IndexOf(_engine.Project.MasterBus));
@@ -490,14 +584,18 @@ namespace Melowrite
         }
 
         // -- Advanced --
-        // Run an engine change on the audio thread, for anything the wrappers don't cover.
+        /// <summary>
+        /// Run an engine change on the audio thread, for anything the wrappers don't cover.
+        /// </summary>
         public void RunOnAudioThread(Action<MeloEngine> command)
             => _rt.Defer(() => { if (_engine != null) command(_engine); });
 
         // -- Lifecycle --
 
-        // Free this channel's current project: stop it and dispose its engine (releases its samplers +
-        // clips), and drop it from the reuse pool. Shared soundfonts are dropped by Melo.UnloadAll().
+        /// <summary>
+        /// Free this channel's current project: stop it and dispose its engine (releases its samplers +
+        /// clips), and drop it from the reuse pool. Shared soundfonts are dropped by Melo.UnloadAll().
+        /// </summary>
         public void Unload()
         {
             var e = _engine;
@@ -508,14 +606,18 @@ namespace Melowrite
         }
     }
 
-    // Host-agnostic mixer + lifecycle. Sums every active engine + the SFX bus into one stereo
-    // output. The HOST owns the device and pumps FillBuffer (audio thread) and Tick (main thread).
-    // No UnityEngine, no framework types - just Melowrite.Core.
+    /// <summary>
+    /// Host-agnostic mixer + lifecycle. Sums every active engine + the SFX bus into one stereo
+    /// output. The HOST owns the device and pumps FillBuffer (audio thread) and Tick (main thread).
+    /// No UnityEngine, no framework types - just Melowrite.Core.
+    /// </summary>
     public sealed class MeloDirector
     {
         // -- Host configuration (set before first use) --
-        // Turn a caller path into an on-disk path. Default = use as-is. Unity points this at its
-        // Assets/StreamingAssets resolver; MonoGame/SDL pass real paths so identity is fine.
+        /// <summary>
+        /// Turn a caller path into an on-disk path. Default = use as-is. Unity points this at its
+        /// Assets/StreamingAssets resolver; MonoGame/SDL pass real paths so identity is fine.
+        /// </summary>
         public static Func<string, string> ResolvePath = p => p;
         public static Action<string> LogError = System.Console.Error.WriteLine;
         public static Action<string> LogWarning = System.Console.WriteLine;
@@ -523,7 +625,9 @@ namespace Melowrite
         private static int _initSampleRate = 44100;
         private static MeloDirector _instance;
 
-        // Set the output sample rate BEFORE first use (must match the host device). Defaults 44100.
+        /// <summary>
+        /// Set the output sample rate BEFORE first use (must match the host device). Defaults 44100.
+        /// </summary>
         public static void Init(int sampleRate) => _initSampleRate = sampleRate > 0 ? sampleRate : 44100;
         public static MeloDirector Instance => _instance ?? (_instance = new MeloDirector(_initSampleRate));
 
@@ -663,7 +767,9 @@ namespace Melowrite
         // Crossfades decode off the main thread, and only one runs per channel at a time: a request that
         // lands while a crossfade is still fading in is ignored outright (a crossfade is atomic), so the
         // button can be hammered without freezing the game or stacking a pile of overlapping engines.
-        // Bumped every publish - log it in your Console to confirm which build actually loaded.
+        /// <summary>
+        /// Bumped every publish - log it in your Console to confirm which build actually loaded.
+        /// </summary>
         public const string Build = "2026.07.07a";
         private static readonly System.Diagnostics.Stopwatch _clock = System.Diagnostics.Stopwatch.StartNew();
         private readonly ConcurrentDictionary<MeloInstance, long> _xfadeBusyUntil = new ConcurrentDictionary<MeloInstance, long>();
@@ -1057,8 +1163,10 @@ namespace Melowrite
 
         // -- The two hooks the host pumps --
 
-        // AUDIO THREAD. Fill `buffer` with the full mix as stereo-interleaved floats
-        // (buffer.Length must be >= frames * 2). Master volume applied.
+        /// <summary>
+        /// AUDIO THREAD. Fill `buffer` with the full mix as stereo-interleaved floats
+        /// (buffer.Length must be &gt;= frames * 2). Master volume applied.
+        /// </summary>
         public void FillBuffer(float[] buffer, int frames)
         {
             int stereoLen = frames * 2;
@@ -1138,7 +1246,9 @@ namespace Melowrite
             TickSwitches();
         }
 
-        // MAIN THREAD. Call once per frame to deliver async-load callbacks and queued note hits.
+        /// <summary>
+        /// MAIN THREAD. Call once per frame to deliver async-load callbacks and queued note hits.
+        /// </summary>
         public void Tick()
         {
             while (_asyncResults.TryDequeue(out var r)) CompleteAsyncLoad(r);
@@ -1150,7 +1260,9 @@ namespace Melowrite
             }
         }
 
-        // Dispose everything (host teardown). After this, Instance makes a fresh director.
+        /// <summary>
+        /// Dispose everything (host teardown). After this, Instance makes a fresh director.
+        /// </summary>
         public void Shutdown()
         {
             foreach (var e in _active) e.Engine?.Dispose();

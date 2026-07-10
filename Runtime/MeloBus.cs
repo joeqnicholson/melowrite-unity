@@ -5,13 +5,17 @@ using Melowrite.Core;
 
 namespace Melowrite.Audio
 {
-    // Typed handle to one bus in a loaded project. Buses are shared send destinations
-    // (usually reverb, delay, and a master). Same effect access as MeloTrack.
+    /// <summary>
+    /// Typed handle to one bus in a loaded project. Buses are shared send destinations
+    /// (usually reverb, delay, and a master). Same effect access as MeloTrack.
+    /// </summary>
     public readonly struct MeloBus
     {
         private readonly Track _bus;
 
-        // index in the project's bus list (0 is master)
+        /// <summary>
+        /// index in the project's bus list (0 is master)
+        /// </summary>
         public int Index { get; }
 
         public bool IsValid => _bus != null;
@@ -20,14 +24,18 @@ namespace Melowrite.Audio
 
         public string Name => _bus?.Name ?? "";
 
-        // 0-1
+        /// <summary>
+        /// 0-1
+        /// </summary>
         public float Volume
         {
             get => _bus?.Volume ?? 0f;
             set { if (_bus != null) _bus.Volume = Math.Clamp(value, 0f, 1f); }
         }
 
-        // -1 left, 0 center, +1 right
+        /// <summary>
+        /// -1 left, 0 center, +1 right
+        /// </summary>
         public float Pan
         {
             get => _bus?.Pan ?? 0f;

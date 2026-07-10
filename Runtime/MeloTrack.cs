@@ -5,30 +5,40 @@ using Melowrite.Core;
 
 namespace Melowrite.Audio
 {
-    // Typed handle to one track in a loaded project. Cheap to hold or re-fetch.
-    // Returned by MeloInstance.Track(...).
+    /// <summary>
+    /// Typed handle to one track in a loaded project. Cheap to hold or re-fetch.
+    /// Returned by MeloInstance.Track(...).
+    /// </summary>
     public readonly struct MeloTrack
     {
         private readonly Track _track;
 
-        // 0-based index in the project
+        /// <summary>
+        /// 0-based index in the project
+        /// </summary>
         public int Index { get; }
 
-        // false if the index didn't resolve to a real track
+        /// <summary>
+        /// false if the index didn't resolve to a real track
+        /// </summary>
         public bool IsValid => _track != null;
 
         internal MeloTrack(Track track, int index) { _track = track; Index = index; }
 
         public string Name => _track?.Name ?? "";
 
-        // 0-1
+        /// <summary>
+        /// 0-1
+        /// </summary>
         public float Volume
         {
             get => _track?.Volume ?? 0f;
             set { if (_track != null) _track.Volume = Math.Clamp(value, 0f, 1f); }
         }
 
-        // -1 left, 0 center, +1 right
+        /// <summary>
+        /// -1 left, 0 center, +1 right
+        /// </summary>
         public float Pan
         {
             get => _track?.Pan ?? 0f;
@@ -47,21 +57,27 @@ namespace Melowrite.Audio
             set { if (_track != null) _track.Solo = value; }
         }
 
-        // send to bus A (usually reverb), 0-1
+        /// <summary>
+        /// send to bus A (usually reverb), 0-1
+        /// </summary>
         public float SendA
         {
             get => _track?.SendA ?? 0f;
             set { if (_track != null) _track.SendA = Math.Clamp(value, 0f, 1f); }
         }
 
-        // send to bus B (usually delay), 0-1
+        /// <summary>
+        /// send to bus B (usually delay), 0-1
+        /// </summary>
         public float SendB
         {
             get => _track?.SendB ?? 0f;
             set { if (_track != null) _track.SendB = Math.Clamp(value, 0f, 1f); }
         }
 
-        // swap the track's instrument; null clears it
+        /// <summary>
+        /// swap the track's instrument; null clears it
+        /// </summary>
         public void SetInstrument(Melowrite.Audio.Instruments.IInstrument? instrument)
         {
             if (_track != null) _track.Instrument = instrument;
@@ -101,7 +117,9 @@ namespace Melowrite.Audio
 
         public bool HasEffect<T>() where T : MeloEffect => GetEffect<T>() != null;
 
-        // add an effect of type T to the end of the chain
+        /// <summary>
+        /// add an effect of type T to the end of the chain
+        /// </summary>
         public T AddEffect<T>() where T : MeloEffect
         {
             if (_track == null) throw new InvalidOperationException("Track is invalid.");
@@ -110,7 +128,9 @@ namespace Melowrite.Audio
             return (T)MeloEffect.Wrap(raw);
         }
 
-        // remove the first effect of type T; true if one was removed
+        /// <summary>
+        /// remove the first effect of type T; true if one was removed
+        /// </summary>
         public bool RemoveEffect<T>() where T : MeloEffect
         {
             if (_track == null) return false;

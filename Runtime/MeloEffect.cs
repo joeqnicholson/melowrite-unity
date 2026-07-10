@@ -2,18 +2,24 @@ using Melowrite.Audio.Effects;
 
 namespace Melowrite.Audio
 {
-    // Typed handle to one effect on a track or bus. Subclasses expose each effect's
-    // parameters as C# properties.
+    /// <summary>
+    /// Typed handle to one effect on a track or bus. Subclasses expose each effect's
+    /// parameters as C# properties.
+    /// </summary>
     public abstract class MeloEffect
     {
-        // The raw effect, for anything the wrapper doesn't surface.
+        /// <summary>
+        /// The raw effect, for anything the wrapper doesn't surface.
+        /// </summary>
         public IEffect Underlying { get; }
 
         protected MeloEffect(IEffect effect) { Underlying = effect; }
 
         public string Name => Underlying.Name;
 
-        // false = bypassed (audio passes through untouched)
+        /// <summary>
+        /// false = bypassed (audio passes through untouched)
+        /// </summary>
         public bool Enabled
         {
             get => Underlying.Enabled;
@@ -23,10 +29,14 @@ namespace Melowrite.Audio
         public void Bypass() => Underlying.Enabled = false;
         public void UnBypass() => Underlying.Enabled = true;
 
-        // Clear internal state (delay lines, reverb tails, envelopes).
+        /// <summary>
+        /// Clear internal state (delay lines, reverb tails, envelopes).
+        /// </summary>
         public void Reset() => Underlying.Reset();
 
-        // Wrap a raw IEffect into its typed wrapper.
+        /// <summary>
+        /// Wrap a raw IEffect into its typed wrapper.
+        /// </summary>
         public static MeloEffect Wrap(IEffect effect)
         {
             return effect switch
@@ -43,7 +53,9 @@ namespace Melowrite.Audio
         }
     }
 
-    // Fallback for any IEffect without a typed wrapper.
+    /// <summary>
+    /// Fallback for any IEffect without a typed wrapper.
+    /// </summary>
     public sealed class MeloUnknownEffect : MeloEffect
     {
         public MeloUnknownEffect(IEffect e) : base(e) { }

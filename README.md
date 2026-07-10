@@ -26,7 +26,7 @@ https://github.com/joeqnicholson/melowrite.git?path=/unity-plugin/Melowrite
 
 ## Export From Melowrite
 
-Use `File > Export Game...` and choose the `Project` target, then put the exported folder
+Use `File > Export Project...` (Ctrl+E) and choose the `Project` target, then put the exported folder
 anywhere in your `Assets` folder, for example:
 
 ```text
@@ -160,6 +160,24 @@ Trigger sounds from a bank project (tracks = categories, multisampler pads = nam
 var sfx = Melo.Load("SFX/bank.melo");
 sfx.Trigger("Footsteps", "Grass");
 sfx.Trigger("Explosions", "Big", 0.8f);
+sfx.Trigger("Footsteps", "Grass", 1f, pan: -0.5f);   // per-trigger stereo position
+```
+
+Every pad call takes an optional `pan` (-1 left .. +1 right), added to the pad's own
+pan. The position is captured per trigger, so overlapping sounds each keep their own.
+
+Hold a pad and release it yourself (loops, drones), or let it follow a button:
+
+```csharp
+sfx.Hold("Ambience", "EngineHum");       // starts and holds until...
+sfx.Release("Ambience", "EngineHum");    // ...the pad's normal release plays
+
+void Update()
+{
+    // Frame-gated hold: keeps sounding while you keep calling it, and stops
+    // itself ~0.12s after the last call. No Release() bookkeeping.
+    if (chargeHeld) sfx.Sustain("Weapons", "ChargeLoop");
+}
 ```
 
 Or play a raw audio file / `AudioClip` directly:
@@ -181,6 +199,30 @@ For anything the wrappers don't cover:
 ```csharp
 _song.RunOnAudioThread(engine => engine.SetTempo(140));
 ```
+
+## Going deeper
+
+The wrappers cover the common calls, but the whole engine is reachable - the same
+classes the Melowrite editor itself edits. `using Melowrite.Audio.Instruments;` and:
+
+```csharp
+var engine = _song.Engine;                      // the raw MeloEngine behind this instance
+
+var track = _song.Track("Footsteps");           // typed handle: Volume/Pan/Mute/Sends/Effects
+if (track.Instrument is MultiSampler ms)        // every pad owns a full Sampler
+{
+    var pad = ms.GetPad(ms.PadIndexByName("Grass"));
+    var s = pad.Sampler;
+    s.Mode = SamplerMode.Random;                // Single / Velocity / Random
+    s.Attack = 0.005f; s.Release = 0.25f;       // ADSR, Volume, Pan, PitchOffsetSemitones...
+    Sampler.LoadSampleIntoSlot(s.AddSlot(), path);  // grow a variation bank at runtime
+    s.PreviewSlot(2);                           // audition one exact slot
+}
+```
+
+Scalar properties (ADSR, volume, pan, mode) are safe to set from the game thread at any
+time. Loading samples decodes from disk - do it at load time, not mid-gameplay. For
+sequencer state that must change in step with playback, use `RunOnAudioThread`.
 
 ## Other platforms (Mac / Linux / console / mobile)
 
