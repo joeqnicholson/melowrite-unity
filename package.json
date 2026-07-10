@@ -1,6 +1,6 @@
 {
   "name": "com.melowrite.audio",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "displayName": "Melowrite Audio Engine",
   "description": "Play Melowrite project files in Unity. Real-time sequencer with synths, samplers, SoundFont playback, and effects. Windows desktop only.",
   "unity": "2021.3",
