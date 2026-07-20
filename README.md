@@ -187,6 +187,14 @@ Melo.PlayOneShot("SFX/hit.wav");
 Melo.PlayOneShot(myAudioClip);
 ```
 
+The same calls exist on a channel. There the sound runs through that project's
+master chain, so it sits in the song's mix (master effects, volume, limiter):
+
+```csharp
+_song.PlayOneShot("SFX/hit.wav");
+_song.PlayOneShot(myAudioClip, effects: false);   // skip master effects, keep volume
+```
+
 Free memory when leaving a level (Unity's scene unload does not):
 
 ```csharp

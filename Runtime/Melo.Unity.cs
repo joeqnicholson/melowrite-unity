@@ -45,33 +45,37 @@ namespace Melowrite
         public static int PlayOneShot(AudioClip clip, float volume = 1f, float pan = 0f, float pitch = 1f,
                                       bool loop = false, bool effects = true)
         {
-            if (clip == null) { Debug.LogError("[Melo] PlayOneShot: null AudioClip"); return -1; }
-            var sfx = MeloDirector.Instance.Sfx;
+            string key = LoadUnityClip(MeloDirector.Instance.Sfx, clip);
+            return key == null ? -1 : MeloDirector.Instance.Sfx.Play(key, volume, pan, pitch, loop, effects);
+        }
+
+        // Copy an AudioClip's PCM into a sample player once, keyed by instance id so repeat fires
+        // reuse it. Returns the clip's key, or null on failure (logged).
+        internal static string LoadUnityClip(Melowrite.Audio.MeloAudio sfx, AudioClip clip)
+        {
+            if (clip == null) { Debug.LogError("[Melo] PlayOneShot: null AudioClip"); return null; }
             string key = "unity:" + clip.GetInstanceID();
+            if (sfx.IsLoaded(key)) return key;
 
-            // Copy the clip's PCM into the SFX player once; keyed by instance id so repeat fires reuse it.
-            if (!sfx.IsLoaded(key))
+            int ch = Mathf.Max(1, clip.channels);
+            int frames = clip.samples;
+            if (frames < 2) { Debug.LogError($"[Melo] AudioClip '{clip.name}' has no samples"); return null; }
+
+            var interleaved = new float[frames * ch];
+            if (!clip.GetData(interleaved, 0))
             {
-                int ch = Mathf.Max(1, clip.channels);
-                int frames = clip.samples;
-                if (frames < 2) { Debug.LogError($"[Melo] AudioClip '{clip.name}' has no samples"); return -1; }
-
-                var interleaved = new float[frames * ch];
-                if (!clip.GetData(interleaved, 0))
-                {
-                    Debug.LogError($"[Melo] Couldn't read AudioClip '{clip.name}' (set its Load Type to Decompress On Load, not Streaming)");
-                    return -1;
-                }
-                var left = new float[frames];
-                var right = new float[frames];
-                if (ch >= 2)
-                    for (int i = 0; i < frames; i++) { left[i] = interleaved[i * ch]; right[i] = interleaved[i * ch + 1]; }
-                else
-                    for (int i = 0; i < frames; i++) { left[i] = interleaved[i]; right[i] = interleaved[i]; }
-
-                sfx.LoadClipPcm(key, left, right, clip.frequency);
+                Debug.LogError($"[Melo] Couldn't read AudioClip '{clip.name}' (set its Load Type to Decompress On Load, not Streaming)");
+                return null;
             }
-            return sfx.Play(key, volume, pan, pitch, loop, effects);
+            var left = new float[frames];
+            var right = new float[frames];
+            if (ch >= 2)
+                for (int i = 0; i < frames; i++) { left[i] = interleaved[i * ch]; right[i] = interleaved[i * ch + 1]; }
+            else
+                for (int i = 0; i < frames; i++) { left[i] = interleaved[i]; right[i] = interleaved[i]; }
+
+            sfx.LoadClipPcm(key, left, right, clip.frequency);
+            return key;
         }
     }
 
@@ -125,6 +129,18 @@ namespace Melowrite
             if (file == null) return;
             Melo.Register(file);
             SwitchSongCrossfade(file.ProjectPath, startChunk, duration, when);
+        }
+
+        // Play a Unity AudioClip once through this channel's master effects and volume. Same
+        // caching rules as the static Melo.PlayOneShot(AudioClip) (Decompress On Load, not Streaming).
+        public int PlayOneShot(AudioClip clip, float volume = 1f, float pan = 0f, float pitch = 1f,
+                               bool loop = false, bool effects = true)
+        {
+            if (_engine == null) return -1;
+            string key = Melo.LoadUnityClip(_engine.OneShots, clip);
+            if (key == null) return -1;
+            _rt.Activate(this);   // make sure this channel is in the mix
+            return _engine.OneShots.Play(key, volume, pan, pitch, loop, effects);
         }
     }
 }

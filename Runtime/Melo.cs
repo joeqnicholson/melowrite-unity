@@ -516,6 +516,35 @@ namespace Melowrite
         /// </summary>
         public void NoteOff(int trackIndex, int midiNote) => _engine?.NoteOff(trackIndex, midiNote);
 
+        // -- Raw audio-file SFX through THIS channel's mix --
+        // Same calls as the static Melo API, but the sound is summed into this project's
+        // master chain: master effects (effects=true), master volume and limiter all apply.
+        // Voices die with the engine on SwitchSong/Unload.
+
+        /// <summary>
+        /// Fire a sound once through this channel's master effects and volume. Polyphonic; the
+        /// clip is decoded once and cached. Returns a voice id you can Stop/adjust, or ignore
+        /// for fire-and-forget. volume 0-1, pan -1..+1, pitch (1 = normal, 2 = octave up),
+        /// loop, effects = run through the master effects (false keeps master volume only).
+        /// </summary>
+        public int PlayOneShot(string file, float volume = 1f, float pan = 0f, float pitch = 1f,
+                               bool loop = false, bool effects = true)
+        {
+            if (_engine == null) return -1;
+            string path = MeloDirector.ResolvePath(file);
+            if (path == null) { MeloDirector.LogError($"[Melo] Sound not found: {file}"); return -1; }
+            _rt.Activate(this);   // make sure this channel is in the mix
+            int voice = _engine.PlayOneShot(path, volume, pan, pitch, loop, effects);
+            if (voice < 0) MeloDirector.LogError($"[Melo] Couldn't decode: {file}");
+            return voice;
+        }
+
+        public void Stop(int voice)               => _engine?.StopOneShot(voice);
+        public void StopSfx()                     => _engine?.StopOneShots();
+        public void SetVolume(int voice, float v) => _engine?.SetOneShotVolume(voice, v);
+        public void SetPan(int voice, float p)    => _engine?.SetOneShotPan(voice, p);
+        public void SetPitch(int voice, float s)  => _engine?.SetOneShotPitch(voice, s);
+
         private int TrackIndex(string name) => _engine == null ? -1 : _engine.GetTrackIndex(name);
 
         // -- Typed handles --

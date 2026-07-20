@@ -3,6 +3,14 @@
 All notable changes to the Melowrite Audio Engine for Unity are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+- `PlayOneShot` on a channel: `song.PlayOneShot(file)` / `song.PlayOneShot(AudioClip)` fire a
+  sound through that project's master chain (master effects, volume, limiter), so it sits in the
+  song's mix instead of the global SFX bus. Same signatures as the static calls, plus per-voice
+  `Stop` / `SetVolume` / `SetPan` / `SetPitch` on the channel. `effects: false` skips the master
+  effects but keeps master volume.
+
 ## [0.1.0]
 
 - `.melo` files are recognized Unity assets: drag one onto a `public MeloFile` field and pass it
