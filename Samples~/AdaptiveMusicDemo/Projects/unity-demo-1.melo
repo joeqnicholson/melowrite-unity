@@ -1,0 +1,754 @@
+{
+  "Name": "unity-demo-1",
+  "Tempo": 120,
+  "PPQN": 96,
+  "BeatsPerBar": 4,
+  "BeatUnit": 4,
+  "ActiveChunkIndex": 0,
+  "SelectedTrackIndex": 2,
+  "Tracks": [
+    {
+      "Id": "63e31167-c34e-4a96-8d40-467727322bbc",
+      "Name": "Harmonica",
+      "Volume": 1,
+      "Pan": -0.35999998,
+      "Muted": false,
+      "Solo": false,
+      "IconIndex": 41,
+      "Family": "Keys",
+      "Roles": [
+        "Chords"
+      ],
+      "Palette": "General User",
+      "Instrument": {
+        "Type": "SoundFontSynth",
+        "SoundFontName": "~/General User v1.472.sf2",
+        "SoundFontPreset": 22,
+        "SoundFontBank": 0
+      },
+      "Effects": []
+    },
+    {
+      "Id": "fdbe70d0-f9de-4b8f-9384-92b602653cd9",
+      "Name": "Italian Accordian",
+      "Volume": 1,
+      "Pan": 0.35999998,
+      "Muted": false,
+      "Solo": false,
+      "IconIndex": 41,
+      "Family": "Keys",
+      "Roles": [
+        "Chords"
+      ],
+      "Palette": "General User",
+      "Instrument": {
+        "Type": "SoundFontSynth",
+        "SoundFontName": "~/General User v1.472.sf2",
+        "SoundFontPreset": 21,
+        "SoundFontBank": 8
+      },
+      "Effects": []
+    },
+    {
+      "Id": "e3a3c97d-9ebd-47c2-ac8d-5169dbc6075f",
+      "Name": "Jazz Kit",
+      "Volume": 1,
+      "Pan": -0.42,
+      "Muted": false,
+      "Solo": false,
+      "IconIndex": 70,
+      "Family": "DrumKit",
+      "Roles": [
+        "Rhythm"
+      ],
+      "Palette": "General User",
+      "Instrument": {
+        "Type": "DrumSampler",
+        "Pads": [
+          {
+            "Pitch": 36,
+            "GmName": "Bass Drum",
+            "SampleName": "~/Standard Kick 1.wav",
+            "StartSample": 0,
+            "EndSample": 12033,
+            "Volume": 1,
+            "Attack": 0.001,
+            "Decay": 0.05,
+            "Sustain": 0.8,
+            "Release": 0.1,
+            "LoopSample": -1,
+            "IconIndex": 0,
+            "CustomName": "kick"
+          },
+          {
+            "Pitch": 37,
+            "GmName": "Side Stick",
+            "SampleName": "~/Sticks.wav",
+            "StartSample": 0,
+            "EndSample": 8929,
+            "Volume": 1,
+            "Attack": 0.001,
+            "Decay": 0.05,
+            "Sustain": 0.8,
+            "Release": 0.1,
+            "LoopSample": -1,
+            "IconIndex": 32,
+            "CustomName": "stick"
+          },
+          {
+            "Pitch": 38,
+            "GmName": "Acoustic Snare",
+            "SampleName": "~/Jazz Snare Soft 1.wav",
+            "StartSample": 0,
+            "EndSample": 3474,
+            "Volume": 1,
+            "Attack": 0,
+            "Decay": 1,
+            "Sustain": 1,
+            "Release": 0.1,
+            "LoopSample": -1,
+            "IconIndex": 10,
+            "CustomName": "snare"
+          },
+          {
+            "Pitch": 39,
+            "GmName": "Hand Clap",
+            "SampleName": "~/Jazz Snare Hard.wav",
+            "StartSample": 0,
+            "EndSample": 15050,
+            "Volume": 1,
+            "Attack": 0.001,
+            "Decay": 0.05,
+            "Sustain": 0.8,
+            "Release": 0.1,
+            "LoopSample": -1,
+            "IconIndex": 10,
+            "CustomName": "snare alt"
+          },
+          {
+            "Pitch": 40,
+            "GmName": "Electric Snare",
+            "SampleName": "~/Hand Clap.wav",
+            "StartSample": 0,
+            "EndSample": 4542,
+            "Volume": 1,
+            "Attack": 0.001,
+            "Decay": 0.05,
+            "Sustain": 0.8,
+            "Release": 0.1,
+            "LoopSample": -1,
+            "IconIndex": 20,
+            "CustomName": "clap"
+          },
+          {
+            "Pitch": 41,
+            "GmName": "Low Floor Tom",
+            "SampleName": "~/Standard Tom 4.wav",
+            "StartSample": 0,
+            "EndSample": 79712,
+            "Volume": 1,
+            "Attack": 0.001,
+            "Decay": 1,
+            "Sustain": 1,
+            "Release": 2,
+            "LoopSample": -1,
+            "IconIndex": 90,
+            "CustomName": "lo tom"
+          },
+          {
+            "Pitch": 42,
+            "GmName": "Closed Hi-Hat",
+            "SampleName": "~/Hi-Hat Closed Soft.wav",
+            "StartSample": 0,
+            "EndSample": 6544,
+            "Volume": 1,
+            "Attack": 0.001,
+            "Decay": 0.05,
+            "Sustain": 0.8,
+            "Release": 0.1,
+            "LoopSample": -1,
+            "IconIndex": 30,
+            "CustomName": "closed hat"
+          },
+          {
+            "Pitch": 43,
+            "GmName": "High Floor Tom",
+            "SampleName": "~/Standard Tom 3.wav",
+            "StartSample": 0,
+            "EndSample": 59984,
+            "Volume": 1,
+            "Attack": 0.001,
+            "Decay": 1,
+            "Sustain": 1,
+            "Release": 2,
+            "LoopSample": -1,
+            "IconIndex": 80,
+            "CustomName": "mid tom"
+          },
+          {
+            "Pitch": 44,
+            "GmName": "Pedal Hi-Hat",
+            "SampleName": "~/Shaker.wav",
+            "StartSample": 374,
+            "EndSample": 7091,
+            "Volume": 1,
+            "Attack": 0.001,
+            "Decay": 1,
+            "Sustain": 1,
+            "Release": 1.9599999,
+            "LoopSample": -1,
+            "IconIndex": 60,
+            "CustomName": "perc"
+          },
+          {
+            "Pitch": 45,
+            "GmName": "Low Tom",
+            "SampleName": "~/Standard Tom 1.wav",
+            "StartSample": 0,
+            "EndSample": 23712,
+            "Volume": 1,
+            "Attack": 0.001,
+            "Decay": 1,
+            "Sustain": 1,
+            "Release": 2,
+            "LoopSample": -1,
+            "IconIndex": 70,
+            "CustomName": "hi tom"
+          },
+          {
+            "Pitch": 46,
+            "GmName": "Open Hi-Hat",
+            "SampleName": "~/Hi-Hat Open.wav",
+            "StartSample": 0,
+            "EndSample": 94994,
+            "Volume": 1,
+            "Attack": 0.001,
+            "Decay": 1,
+            "Sustain": 0,
+            "Release": 0.98999965,
+            "LoopSample": -1,
+            "IconIndex": 40,
+            "CustomName": "open hat"
+          },
+          {
+            "Pitch": 47,
+            "GmName": "Low-Mid Tom",
+            "SampleName": "~/Claves.wav",
+            "StartSample": 0,
+            "EndSample": 2350,
+            "Volume": 1,
+            "Attack": 0.001,
+            "Decay": 0.05,
+            "Sustain": 0.8,
+            "Release": 0.1,
+            "LoopSample": -1,
+            "IconIndex": 52
+          },
+          {
+            "Pitch": 48,
+            "GmName": "Hi-Mid Tom",
+            "SampleName": "~/Wood Block Med.wav",
+            "StartSample": 0,
+            "EndSample": 1798,
+            "Volume": 1,
+            "Attack": 0.001,
+            "Decay": 0.05,
+            "Sustain": 0.8,
+            "Release": 0.1,
+            "LoopSample": -1,
+            "IconIndex": 2,
+            "CustomName": "block"
+          },
+          {
+            "Pitch": 49,
+            "GmName": "Crash Cymbal 1",
+            "SampleName": "~/Crash Cymbal.wav",
+            "StartSample": 0,
+            "EndSample": 106299,
+            "Volume": 1,
+            "Attack": 0.001,
+            "Decay": 0.05,
+            "Sustain": 0.8,
+            "Release": 0.1,
+            "LoopSample": -1,
+            "IconIndex": 12,
+            "CustomName": "cymbal"
+          },
+          {
+            "Pitch": 50,
+            "GmName": "High Tom",
+            "SampleName": "~/Cowbell.wav",
+            "StartSample": 0,
+            "EndSample": 4831,
+            "Volume": 1,
+            "Attack": 0.001,
+            "Decay": 0.05,
+            "Sustain": 0.8,
+            "Release": 0.1,
+            "PitchOffset": 8,
+            "LoopSample": -1,
+            "IconIndex": 50,
+            "CustomName": "clink"
+          },
+          {
+            "Pitch": 51,
+            "GmName": "Ride Cymbal",
+            "SampleName": "~/Ride Cymbal.wav",
+            "StartSample": 0,
+            "EndSample": 121300,
+            "Volume": 1,
+            "Attack": 0,
+            "Decay": 1,
+            "Sustain": 1,
+            "Release": 2,
+            "LoopSample": -1,
+            "IconIndex": 22,
+            "CustomName": "ride"
+          }
+        ]
+      },
+      "Effects": []
+    },
+    {
+      "Id": "d59c9098-3d12-4782-8097-00e7f9acb8a9",
+      "Name": "Acoustic Bass",
+      "Volume": 1,
+      "Pan": 0.42,
+      "Muted": false,
+      "Solo": false,
+      "IconIndex": 35,
+      "Family": "Guitar",
+      "Roles": [
+        "Bass"
+      ],
+      "Palette": "General User",
+      "Instrument": {
+        "Type": "SoundFontSynth",
+        "SoundFontName": "~/General User v1.472.sf2",
+        "SoundFontPreset": 32,
+        "SoundFontBank": 0
+      },
+      "Effects": [
+        {
+          "Type": "Compressor",
+          "CompThreshold": -21.750002,
+          "CompRatio": 2.6062284,
+          "CompAttack": 10,
+          "CompRelease": 100,
+          "CompMakeup": 0,
+          "CompSidechainTrackId": "e3a3c97d-9ebd-47c2-ac8d-5169dbc6075f",
+          "Mix": 1
+        }
+      ]
+    }
+  ],
+  "Buses": [
+    {
+      "Id": "f4aa59fe-1c8d-4a1a-83d9-5fc78afb2fdc",
+      "Name": "Master",
+      "Volume": 0.8,
+      "Pan": 0,
+      "Muted": false,
+      "Solo": false,
+      "IconIndex": 11,
+      "Family": "Synth",
+      "IsMasterBus": true,
+      "Effects": []
+    }
+  ],
+  "Chunks": [
+    {
+      "Id": "24fdfa53-e0a3-4da0-9949-5043ec6d0901",
+      "Name": "Chunk",
+      "ColorIndex": 0,
+      "LengthTicks": 0,
+      "Entries": [
+        {
+          "TrackIndex": 1,
+          "Pattern": {
+            "Name": "Recorded",
+            "IsDrum": false,
+            "IsChord": false,
+            "StartTick": 0,
+            "LengthTicks": 1536,
+            "Notes": [
+              {
+                "Tick": 0,
+                "Pitch": 62,
+                "Velocity": 100,
+                "Duration": 24
+              },
+              {
+                "Tick": 96,
+                "Pitch": 69,
+                "Velocity": 100,
+                "Duration": 24
+              },
+              {
+                "Tick": 96,
+                "Pitch": 65,
+                "Velocity": 100,
+                "Duration": 24
+              },
+              {
+                "Tick": 240,
+                "Pitch": 65,
+                "Velocity": 100,
+                "Duration": 24
+              },
+              {
+                "Tick": 288,
+                "Pitch": 67,
+                "Velocity": 100,
+                "Duration": 24
+              },
+              {
+                "Tick": 384,
+                "Pitch": 62,
+                "Velocity": 100,
+                "Duration": 24
+              },
+              {
+                "Tick": 480,
+                "Pitch": 65,
+                "Velocity": 100,
+                "Duration": 24
+              },
+              {
+                "Tick": 480,
+                "Pitch": 69,
+                "Velocity": 100,
+                "Duration": 24
+              },
+              {
+                "Tick": 624,
+                "Pitch": 65,
+                "Velocity": 100,
+                "Duration": 24
+              },
+              {
+                "Tick": 672,
+                "Pitch": 67,
+                "Velocity": 100,
+                "Duration": 24
+              },
+              {
+                "Tick": 768,
+                "Pitch": 62,
+                "Velocity": 100,
+                "Duration": 24
+              },
+              {
+                "Tick": 864,
+                "Pitch": 69,
+                "Velocity": 100,
+                "Duration": 24
+              },
+              {
+                "Tick": 864,
+                "Pitch": 65,
+                "Velocity": 100,
+                "Duration": 24
+              },
+              {
+                "Tick": 1008,
+                "Pitch": 65,
+                "Velocity": 100,
+                "Duration": 24
+              },
+              {
+                "Tick": 1056,
+                "Pitch": 67,
+                "Velocity": 100,
+                "Duration": 24
+              },
+              {
+                "Tick": 1152,
+                "Pitch": 60,
+                "Velocity": 100,
+                "Duration": 24
+              },
+              {
+                "Tick": 1248,
+                "Pitch": 62,
+                "Velocity": 100,
+                "Duration": 24
+              },
+              {
+                "Tick": 1440,
+                "Pitch": 65,
+                "Velocity": 100,
+                "Duration": 24
+              },
+              {
+                "Tick": 1440,
+                "Pitch": 69,
+                "Velocity": 100,
+                "Duration": 24
+              }
+            ],
+            "ColorIndex": 0
+          },
+          "StartTick": 0,
+          "LengthTicks": 1536,
+          "PlayStartOffsetTicks": 0,
+          "ColorIndex": 0
+        },
+        {
+          "TrackIndex": 2,
+          "Pattern": {
+            "Name": "",
+            "IsDrum": true,
+            "IsChord": false,
+            "StartTick": 0,
+            "LengthTicks": 1536,
+            "Notes": [
+              {
+                "Tick": 0,
+                "Pitch": 36,
+                "Velocity": 100,
+                "Duration": 96
+              },
+              {
+                "Tick": 192,
+                "Pitch": 41,
+                "Velocity": 100,
+                "Duration": 96
+              },
+              {
+                "Tick": 384,
+                "Pitch": 36,
+                "Velocity": 100,
+                "Duration": 96
+              },
+              {
+                "Tick": 480,
+                "Pitch": 46,
+                "Velocity": 100,
+                "Duration": 96
+              },
+              {
+                "Tick": 576,
+                "Pitch": 43,
+                "Velocity": 100,
+                "Duration": 96
+              },
+              {
+                "Tick": 768,
+                "Pitch": 36,
+                "Velocity": 100,
+                "Duration": 96
+              },
+              {
+                "Tick": 960,
+                "Pitch": 41,
+                "Velocity": 100,
+                "Duration": 96
+              },
+              {
+                "Tick": 1152,
+                "Pitch": 36,
+                "Velocity": 100,
+                "Duration": 96
+              },
+              {
+                "Tick": 1248,
+                "Pitch": 37,
+                "Velocity": 100,
+                "Duration": 96
+              },
+              {
+                "Tick": 1296,
+                "Pitch": 36,
+                "Velocity": 100,
+                "Duration": 96
+              },
+              {
+                "Tick": 1344,
+                "Pitch": 40,
+                "Velocity": 100,
+                "Duration": 96
+              }
+            ],
+            "ColorIndex": 2
+          },
+          "StartTick": 0,
+          "LengthTicks": 1536,
+          "PlayStartOffsetTicks": 0,
+          "ColorIndex": 0
+        },
+        {
+          "TrackIndex": 3,
+          "Pattern": {
+            "Name": "Recorded",
+            "IsDrum": false,
+            "IsChord": false,
+            "StartTick": 0,
+            "LengthTicks": 1536,
+            "Notes": [
+              {
+                "Tick": 0,
+                "Pitch": 38,
+                "Velocity": 100,
+                "Duration": 384
+              },
+              {
+                "Tick": 384,
+                "Pitch": 40,
+                "Velocity": 100,
+                "Duration": 288
+              },
+              {
+                "Tick": 672,
+                "Pitch": 38,
+                "Velocity": 100,
+                "Duration": 48
+              },
+              {
+                "Tick": 720,
+                "Pitch": 40,
+                "Velocity": 100,
+                "Duration": 48
+              },
+              {
+                "Tick": 768,
+                "Pitch": 41,
+                "Velocity": 100,
+                "Duration": 192
+              },
+              {
+                "Tick": 960,
+                "Pitch": 36,
+                "Velocity": 100,
+                "Duration": 192
+              },
+              {
+                "Tick": 1152,
+                "Pitch": 38,
+                "Velocity": 100,
+                "Duration": 384
+              }
+            ],
+            "ColorIndex": 3
+          },
+          "StartTick": 0,
+          "LengthTicks": 1536,
+          "PlayStartOffsetTicks": 0,
+          "ColorIndex": 0
+        },
+        {
+          "TrackIndex": 0,
+          "Pattern": {
+            "Name": "Recorded",
+            "IsDrum": false,
+            "IsChord": false,
+            "StartTick": 0,
+            "LengthTicks": 1536,
+            "Notes": [
+              {
+                "Tick": 0,
+                "Pitch": 72,
+                "Velocity": 100,
+                "Duration": 48
+              },
+              {
+                "Tick": 48,
+                "Pitch": 71,
+                "Velocity": 100,
+                "Duration": 48
+              },
+              {
+                "Tick": 96,
+                "Pitch": 72,
+                "Velocity": 100,
+                "Duration": 48
+              },
+              {
+                "Tick": 144,
+                "Pitch": 74,
+                "Velocity": 100,
+                "Duration": 48
+              },
+              {
+                "Tick": 192,
+                "Pitch": 72,
+                "Velocity": 100,
+                "Duration": 96
+              },
+              {
+                "Tick": 288,
+                "Pitch": 71,
+                "Velocity": 100,
+                "Duration": 96
+              },
+              {
+                "Tick": 384,
+                "Pitch": 67,
+                "Velocity": 100,
+                "Duration": 96
+              },
+              {
+                "Tick": 480,
+                "Pitch": 69,
+                "Velocity": 100,
+                "Duration": 24
+              },
+              {
+                "Tick": 768,
+                "Pitch": 67,
+                "Velocity": 100,
+                "Duration": 48
+              },
+              {
+                "Tick": 816,
+                "Pitch": 65,
+                "Velocity": 100,
+                "Duration": 48
+              },
+              {
+                "Tick": 864,
+                "Pitch": 67,
+                "Velocity": 100,
+                "Duration": 48
+              },
+              {
+                "Tick": 912,
+                "Pitch": 69,
+                "Velocity": 100,
+                "Duration": 48
+              },
+              {
+                "Tick": 960,
+                "Pitch": 67,
+                "Velocity": 100,
+                "Duration": 96
+              },
+              {
+                "Tick": 1056,
+                "Pitch": 64,
+                "Velocity": 100,
+                "Duration": 480
+              }
+            ],
+            "ColorIndex": 1
+          },
+          "StartTick": 0,
+          "LengthTicks": 1536,
+          "PlayStartOffsetTicks": 0,
+          "ColorIndex": 0
+        }
+      ]
+    }
+  ],
+  "Timeline": {
+    "Placements": []
+  },
+  "ScaleRoot": 2,
+  "ScaleType": "Dorian",
+  "ScaleLocked": true,
+  "TrackViewTabColor": 0,
+  "LoopEnabled": true,
+  "LoopEndTick": 1536,
+  "PaletteFilter": "General User",
+  "LastGameExportFolder": "C:\\Users\\joeqn\\Documents\\unity\\Melowrite Sample\\Assets\\MelowriteDemo\\Projects"
+}
