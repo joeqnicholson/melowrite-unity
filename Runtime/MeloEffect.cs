@@ -3,22 +3,21 @@ using Melowrite.Audio.Effects;
 namespace Melowrite.Audio
 {
     /// <summary>
-    /// Typed handle to one effect on a track or bus. Subclasses expose each effect's
-    /// parameters as C# properties.
+    /// handle to one effect on a track or bus. subclasses expose the params as properties
     /// </summary>
     public abstract class MeloEffect
     {
         /// <summary>
-        /// The raw effect, for anything the wrapper doesn't surface.
+        /// raw effect for whatever the wrapper doesnt cover
         /// </summary>
-        public IEffect Underlying { get; }
+        public Effect Underlying { get; }
 
-        protected MeloEffect(IEffect effect) { Underlying = effect; }
+        protected MeloEffect(Effect effect) { Underlying = effect; }
 
         public string Name => Underlying.Name;
 
         /// <summary>
-        /// false = bypassed (audio passes through untouched)
+        /// false = bypassed
         /// </summary>
         public bool Enabled
         {
@@ -30,14 +29,14 @@ namespace Melowrite.Audio
         public void UnBypass() => Underlying.Enabled = true;
 
         /// <summary>
-        /// Clear internal state (delay lines, reverb tails, envelopes).
+        /// clears delay lines, tails, envelopes
         /// </summary>
         public void Reset() => Underlying.Reset();
 
         /// <summary>
-        /// Wrap a raw IEffect into its typed wrapper.
+        /// raw Effect -> typed wrapper
         /// </summary>
-        public static MeloEffect Wrap(IEffect effect)
+        public static MeloEffect Wrap(Effect effect)
         {
             return effect switch
             {
@@ -54,10 +53,10 @@ namespace Melowrite.Audio
     }
 
     /// <summary>
-    /// Fallback for any IEffect without a typed wrapper.
+    /// fallback for anything without a wrapper
     /// </summary>
     public sealed class MeloUnknownEffect : MeloEffect
     {
-        public MeloUnknownEffect(IEffect e) : base(e) { }
+        public MeloUnknownEffect(Effect e) : base(e) { }
     }
 }

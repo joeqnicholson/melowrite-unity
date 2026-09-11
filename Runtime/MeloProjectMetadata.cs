@@ -5,8 +5,8 @@ using System.Text.Json;
 namespace Melowrite.Audio
 {
     /// <summary>
-    /// Reads chunk/track/bus/palette names from a .melo without loading samples, soundfonts,
-    /// or an engine. Cheap enough to run from a Unity inspector on every file change.
+    /// chunk/track/bus/palette names straight out of the json, no samples, no engine.
+    /// cheap enough for an inspector to run on every file change
     /// </summary>
     public sealed class MeloProjectMetadata
     {
@@ -20,7 +20,7 @@ namespace Melowrite.Audio
         public List<string> PaletteNames { get; } = new();
 
         /// <summary>
-        /// Parse a .melo. Returns null if the file can't be read or parsed.
+        /// null if it cant be read or parsed
         /// </summary>
         public static MeloProjectMetadata? Read(string projectPath)
         {
@@ -46,7 +46,7 @@ namespace Melowrite.Audio
                 ReadNamedArray(root, "Tracks", meta.TrackNames);
                 ReadNamedArray(root, "Buses", meta.BusNames);
 
-                // Palettes live on individual tracks, so pull a deduped list from any track Palette field.
+                // palettes live on tracks, dedupe them
                 if (root.TryGetProperty("Tracks", out var tracksEl) && tracksEl.ValueKind == JsonValueKind.Array)
                 {
                     var seen = new HashSet<string>();

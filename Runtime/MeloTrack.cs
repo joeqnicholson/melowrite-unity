@@ -6,20 +6,19 @@ using Melowrite.Core;
 namespace Melowrite.Audio
 {
     /// <summary>
-    /// Typed handle to one track in a loaded project. Cheap to hold or re-fetch.
-    /// Returned by MeloInstance.Track(...).
+    /// handle to one track, cheap to hold or refetch. from MeloInstance.Track()
     /// </summary>
     public readonly struct MeloTrack
     {
         private readonly Track _track;
 
         /// <summary>
-        /// 0-based index in the project
+        /// index in the project
         /// </summary>
         public int Index { get; }
 
         /// <summary>
-        /// false if the index didn't resolve to a real track
+        /// false if it didnt resolve
         /// </summary>
         public bool IsValid => _track != null;
 
@@ -37,7 +36,7 @@ namespace Melowrite.Audio
         }
 
         /// <summary>
-        /// -1 left, 0 center, +1 right
+        /// -1 left, 0 center, 1 right
         /// </summary>
         public float Pan
         {
@@ -76,14 +75,14 @@ namespace Melowrite.Audio
         }
 
         /// <summary>
-        /// swap the track's instrument, null clears it
+        /// null clears it
         /// </summary>
-        public void SetInstrument(Melowrite.Audio.Instruments.IInstrument? instrument)
+        public void SetInstrument(Melowrite.Audio.Instruments.Instrument? instrument)
         {
             if (_track != null) _track.Instrument = instrument;
         }
 
-        public Melowrite.Audio.Instruments.IInstrument? Instrument => _track?.Instrument;
+        public Melowrite.Audio.Instruments.Instrument? Instrument => _track?.Instrument;
 
         // -- Effects --
 
@@ -118,7 +117,7 @@ namespace Melowrite.Audio
         public bool HasEffect<T>() where T : MeloEffect => GetEffect<T>() != null;
 
         /// <summary>
-        /// add an effect of type T to the end of the chain
+        /// appends to the chain
         /// </summary>
         public T AddEffect<T>() where T : MeloEffect
         {
@@ -129,7 +128,7 @@ namespace Melowrite.Audio
         }
 
         /// <summary>
-        /// remove the first effect of type T, true if one was removed
+        /// removes the first T, true if it found one
         /// </summary>
         public bool RemoveEffect<T>() where T : MeloEffect
         {
@@ -144,7 +143,7 @@ namespace Melowrite.Audio
             return false;
         }
 
-        private static IEffect CreateUnderlyingFor<T>() where T : MeloEffect
+        private static Effect CreateUnderlyingFor<T>() where T : MeloEffect
         {
             var t = typeof(T);
             if (t == typeof(MeloChorus))             return new ChorusEffect();

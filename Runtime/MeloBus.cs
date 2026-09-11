@@ -6,15 +6,14 @@ using Melowrite.Core;
 namespace Melowrite.Audio
 {
     /// <summary>
-    /// Typed handle to one bus in a loaded project. Buses are shared send destinations
-    /// (usually reverb, delay, and a master). Same effect access as MeloTrack.
+    /// handle to one bus. shared send destinations (reverb, delay, master). same effect access as MeloTrack
     /// </summary>
     public readonly struct MeloBus
     {
         private readonly Track _bus;
 
         /// <summary>
-        /// index in the project's bus list (0 is master)
+        /// 0 is master
         /// </summary>
         public int Index { get; }
 
@@ -34,7 +33,7 @@ namespace Melowrite.Audio
         }
 
         /// <summary>
-        /// -1 left, 0 center, +1 right
+        /// -1 left, 0 center, 1 right
         /// </summary>
         public float Pan
         {
@@ -101,7 +100,7 @@ namespace Melowrite.Audio
             return false;
         }
 
-        private static IEffect CreateUnderlyingFor<T>() where T : MeloEffect
+        private static Effect CreateUnderlyingFor<T>() where T : MeloEffect
         {
             var t = typeof(T);
             if (t == typeof(MeloChorus))             return new ChorusEffect();
